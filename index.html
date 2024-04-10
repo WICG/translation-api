@@ -2,13 +2,13 @@
  <head>
   <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-  <title>The TODO API</title>
+  <title>Web Translation API</title>
   <meta content="w3c/UD" name="w3c-status">
   <link href="https://www.w3.org/StyleSheets/TR/2021/W3C-UD" rel="stylesheet">
   <meta content="Bikeshed version d765c696b, updated Fri Mar 8 15:58:52 2024 -0800" name="generator">
-  <link href="https://explainers-by-googlers.github.io/todo-your-repo-name" rel="canonical">
+  <link href="https://explainers-by-googlers.github.io/translation-api" rel="canonical">
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
-  <meta content="380e443cf85459ac8f6981bfd204b60bad4331c9" name="revision">
+  <meta content="916dbedc971bf5c056bde0f7ffb9018fb1e5aaac" name="revision">
   <meta content="dark light" name="color-scheme">
   <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
 <style>/* Boilerplate: style-autolinks */
@@ -409,158 +409,21 @@ a.self-link::before            { content: "¶"; }
 .heading > a.self-link::before { content: "§"; }
 dfn > a.self-link::before      { content: "#"; }
 </style>
-<style>/* Boilerplate: style-wpt */
-:root {
-    --wpt-border: hsl(0, 0%, 60%);
-    --wpt-bg: hsl(0, 0%, 95%);
-    --wpt-text: var(--text);
-    --wptheading-text: hsl(0, 0%, 30%);
-}
-@media (prefers-color-scheme: dark) {
-    :root {
-        --wpt-border: hsl(0, 0%, 30%);
-        --wpt-bg: var(--borderedblock-bg);
-        --wpt-text: var(--text);
-        --wptheading-text: hsl(0, 0%, 60%);
-    }
-}
-.wpt-tests-block {
-    list-style: none;
-    border-left: .5em solid var(--wpt-border);
-    background: var(--wpt-bg);
-    color: var(--wpt-text);
-    margin: 1em auto;
-    padding: .5em;
-}
-.wpt-tests-block summary {
-    color: var(--wptheading-text);
-    font-weight: normal;
-    text-transform: uppercase;
-}
-.wpt-tests-block summary::marker{
-    color: var(--wpt-border);
-}
-.wpt-tests-block summary:hover::marker{
-    color: var(--wpt-text);
-}
-/*
-   The only content  of a wpt test block in its closed state is the <summary>,
-   which contains the word TESTS,
-   and that is absolutely positioned.
-   In that closed state, wpt test blocks are styled
-   to have a top margin whose height is exactly equal
-   to the height of the absolutely positioned <summary>,
-   and no other background/padding/margin/border.
-   The wpt test block elements will therefore allow the maring
-   of the previous/next block elements
-   to collapse through them;
-   if this combined margin would be larger than its own top margin,
-   it stays as is,
-   and therefore the pre-existing vertical rhythm of the document is undisturbed.
-   If that combined margin would be smaller, it is grown to that size.
-   This means that the wpt test block ensures
-   that there's always enough vertical space to insert the summary,
-   without adding more than is needed.
-*/
-.wpt-tests-block:not([open]){
-    padding: 0;
-    border: none;
-    background: none;
-    font-size: 0.75em;
-    line-height: 1;
-    position: relative;
-    margin: 1em 0 0;
-}
-.wpt-tests-block:not([open]) summary {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-}
-/*
-   It is possible that both the last child of a block element
-   and the block element itself
-   would be annotated with a <wpt> block each.
-   If the block element has a padding or a border,
-   that's fine, but otherwise
-   the bottom margin of the block and of its last child would collapse
-   and both <wpt> elements would overlap, being both placed there.
-   To avoid that, add 1px of padding to the <wpt> element annotating the last child
-   to prevent the bottom margin of the block and of its last child from collapsing
-   (and as much negative margin,
-   as wel only want to prevent margin collapsing,
-   but are not trying to actually take more space).
-*/
-.wpt-tests-block:not([open]):last-child {
-    padding-bottom: 1px;
-    margin-bottom: -1px;
-}
-/*
-   Exception to the previous rule:
-   don't do that in non-last list items,
-   because it's not necessary,
-   and would therefore consume more space than strictly needed.
-   Lists must have list items as children, not <wpt> elements,
-   so a <wpt> element cannot be a sibling of a list item,
-   and the collision that the previous rule avoids cannot happen.
-*/
-li:not(:last-child) > .wpt-tests-block:not([open]):last-child,
-dd:not(:last-child) > .wpt-tests-block:not([open]):last-child {
-    padding-bottom: 0;
-    margin-bottom: 0;
-}
-.wpt-tests-block:not([open]):not(:hover){
-    opacity: 0.5;
-}
-.wpt-tests-list {
-    list-style: none;
-    display: grid;
-    margin: 0;
-    padding: 0;
-    grid-template-columns: 1fr max-content auto auto;
-    grid-column-gap: .5em;
-}
-.wpt-tests-block hr:last-child {
-    display: none;
-}
-.wpt-test {
-    display: contents;
-}
-.wpt-test > a {
-    text-decoration: underline;
-    border: none;
-}
-.wpt-test > .wpt-name { grid-column: 1; }
-.wpt-test > .wpt-results { grid-column: 2; }
-.wpt-test > .wpt-live { grid-column: 3; }
-.wpt-test > .wpt-source { grid-column: 4; }
-
-.wpt-test > .wpt-results {
-    display: flex;
-    gap: .1em;
-}
-.wpt-test .wpt-result {
-    display: inline-block;
-    height: 1em;
-    width: 1em;
-    border-radius: 50%;
-    position: relative;
-}
-</style>
  <body class="h-entry">
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
-   <h1 class="p-name no-ref" id="title">The TODO API</h1>
+   <h1 class="p-name no-ref" id="title">Web Translation API</h1>
    <p id="w3c-state"><a href="https://www.w3.org/standards/types#UD">Unofficial Proposal Draft</a>, <time class="dt-updated" datetime="2024-04-10">10 April 2024</time></p>
    <details open>
     <summary>More details about this document</summary>
     <div data-fill-with="spec-metadata">
      <dl>
       <dt>This version:
-      <dd><a class="u-url" href="https://explainers-by-googlers.github.io/todo-your-repo-name">https://explainers-by-googlers.github.io/todo-your-repo-name</a>
+      <dd><a class="u-url" href="https://explainers-by-googlers.github.io/translation-api">https://explainers-by-googlers.github.io/translation-api</a>
       <dt>Issue Tracking:
-      <dd><a href="https://github.com/explainers-by-googlers/todo-your-repo-name/issues/">GitHub</a>
+      <dd><a href="https://github.com/explainers-by-googlers/translation-api/issues/">GitHub</a>
       <dt class="editor">Editor:
-      <dd class="editor p-author h-card vcard"><a class="p-name fn u-email email" href="mailto:TODO@google.com">TODO: Your Name</a> (<a class="p-org org" href="https://google.com">Google</a>)
+      <dd class="editor p-author h-card vcard"><a class="p-name fn u-url url" href="https://domenic.me/">Domenic Denicola</a> (<a class="p-org org" href="https://google.com">Google</a>) <a class="u-email email" href="mailto:d@domenic.me">d@domenic.me</a>
      </dl>
     </div>
    </details>
@@ -570,7 +433,7 @@ dd:not(:last-child) > .wpt-tests-block:not([open]):last-child {
   </div>
   <div class="p-summary" data-fill-with="abstract">
    <h2 class="no-num no-toc no-ref heading settled" id="abstract"><span class="content">Abstract</span></h2>
-   <p>TODO: A short description of your spec, one or two sentences.</p>
+   <p>The web translation API gives web pages the ability to translate text between languages, and detect the language of such text.</p>
   </div>
   <h2 class="no-num no-toc no-ref heading settled" id="sotd"><span class="content">Status of this document</span></h2>
   <div data-fill-with="status">
@@ -581,64 +444,10 @@ dd:not(:last-child) > .wpt-tests-block:not([open]):last-child {
    <h2 class="no-num no-toc no-ref" id="contents">Table of Contents</h2>
    <ol class="toc" role="directory">
     <li><a href="#intro"><span class="secno">1</span> <span class="content">Introduction</span></a>
-    <li>
-     <a href="#w3c-conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
-     <ol class="toc">
-      <li><a href="#w3c-conventions"><span class="secno"></span> <span class="content">Document conventions</span></a>
-     </ol>
-    <li>
-     <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
-     <ol class="toc">
-      <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
-     </ol>
    </ol>
   </nav>
   <main>
    <h2 class="heading settled" data-level="1" id="intro"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#intro"></a></h2>
-   <p>For now, see the <a href="https://github.com/explainers-by-googlers/todo-your-repo-name">explainer</a>.</p>
-   <p>See <a href="https://garykac.github.io/procspec/">https://garykac.github.io/procspec/</a>, <a href="https://dlaliberte.github.io/bikeshed-intro/index.html">https://dlaliberte.github.io/bikeshed-intro/index.html</a>,
-and <a href="https://speced.github.io/bikeshed/">https://speced.github.io/bikeshed/</a> to get started on your
-specificaton.</p>
+   <p>For now, see the <a href="https://github.com/explainers-by-googlers/translation-api">explainer</a>.</p>
   </main>
-  <div data-fill-with="conformance">
-   <h2 class="no-ref no-num heading settled" id="w3c-conformance"><span class="content">Conformance</span><a class="self-link" href="#w3c-conformance"></a></h2>
-   <h3 class="no-ref no-num heading settled" id="w3c-conventions"><span class="content">Document conventions</span><a class="self-link" href="#w3c-conventions"></a></h3>
-   <p>Conformance requirements are expressed
-    with a combination of descriptive assertions
-    and RFC 2119 terminology.
-    The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL”
-    in the normative parts of this document
-    are to be interpreted as described in RFC 2119.
-    However, for readability,
-    these words do not appear in all uppercase letters in this specification. </p>
-   <p>All of the text of this specification is normative
-    except sections explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119" title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</a> </p>
-   <p>Examples in this specification are introduced with the words “for example”
-    or are set apart from the normative text
-    with <code>class="example"</code>,
-    like this: </p>
-   <div class="example" id="w3c-example">
-    <a class="self-link" href="#w3c-example"></a> 
-    <p>This is an example of an informative example. </p>
-   </div>
-   <p>Informative notes begin with the word “Note”
-    and are set apart from the normative text
-    with <code>class="note"</code>,
-    like this: </p>
-   <p class="note" role="note">Note, this is an informative note.</p>
-   <details class="wpt-tests-block" dir="ltr" lang="en" open>
-    <summary>Tests</summary>
-    <p>Tests relating to the content of this specification
-                     may be documented in “Tests” blocks like this one.
-                     Any such block is non-normative.</p>
-    <ul class="wpt-tests-list"></ul>
-    <hr>
-   </details>
-  </div>
   <script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script>
-  <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
-  <h3 class="no-num no-ref heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
-  <dl>
-   <dt id="biblio-rfc2119">[RFC2119]
-   <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
-  </dl>
