@@ -1,28 +1,21 @@
 <pre class='metadata'>
-Title: The TODO API
-Shortname: todo
+Title: Web Translation API
+Shortname: translation
 Level: None
 Status: w3c/UD
-Repository: explainers-by-googlers/todo-your-repo-name
-URL: https://explainers-by-googlers.github.io/todo-your-repo-name
-Editor: TODO: Your Name, Google https://google.com, TODO@google.com
-Abstract: TODO: A short description of your spec, one or two sentences.
+Repository: explainers-by-googlers/translation-api
+URL: https://explainers-by-googlers.github.io/translation-api
+Editor: Domenic Denicola, Google https://google.com, d@domenic.me, https://domenic.me/
+Abstract: The web translation API gives web pages the ability to translate text between languages, and detect the language of such text.
 Markup Shorthands: markdown yes, css no
 Complain About: accidental-2119 yes, missing-example-ids yes
 Assume Explicit For: yes
 Die On: warning
-WPT Path Prefix: TODO-API-LABEL
-WPT Display: closed
-Include MDN Panels: if possible
-Include Can I Use Panels: yes
+Boilerplate: omit conformance
+Default Biblio Status: current
 </pre>
 
 Introduction {#intro}
 =====================
 
 For now, see the [explainer]([REPOSITORYURL]).
-
-See [https://garykac.github.io/procspec/](https://garykac.github.io/procspec/),
-[https://dlaliberte.github.io/bikeshed-intro/index.html](https://dlaliberte.github.io/bikeshed-intro/index.html),
-and [https://speced.github.io/bikeshed/](https://speced.github.io/bikeshed/) to get started on your
-specificaton.
