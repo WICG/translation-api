@@ -155,17 +155,13 @@ If no language can be detected with reasonable confidence, this API returns an e
 To get a list of languages which the current browser can translate, we can use the following code:
 
 ```js
-for (const { language, availability } of await translation.supportedLanguages()) {
+for (const language of await translation.supportedLanguages()) {
   let text = languageTagToHumanReadable(lang, "en"); // see appendix
-  if (availibility === "after-download") {
-    text += "*";
-  }
-
   languageDropdown.append(new Option(text, language));
 }
 ```
 
-Here `availability` is either `"after-download"` or `"readily"`.
+This method does not distinguish between languages which are available `"readily"` vs. `"after-download"`, because giving that information for all languages at once is too much of a [privacy issue](#privacy-considerations). Instead, the developer must make individual calls to `canTranslate()`, which gives the browser more opportunities to apply privacy mitigations.
 
 ## Detailed design
 
@@ -180,7 +176,7 @@ interface Translation {
   Promise<TranslationAvailability> canDetect();
   Promise<LanguageDetector> createDetector();
 
-  Promise<sequence<AvailableLanguage>>> supportedLanguages();
+  Promise<sequence<DOMString>>> supportedLanguages();
 };
 
 [Exposed=(Window,Worker)]
@@ -212,11 +208,6 @@ enum TranslationAvailability { "readily", "after-download", "no" };
 dictionary TranslationLanguageOptions {
   required DOMString targetLanguage;
   DOMString sourceLanguage;
-};
-
-dictionary AvailableLanguage {
-  DOMString language;
-  TranslationAvailability availability;
 };
 
 dictionary LanguageDetectionResult {
@@ -280,7 +271,9 @@ Some sort of mitigation may be necessary here. We believe this is adjacent to ot
 
 * Grouping language packs to reduce the number of bits, so that downloading one language also downloads others in its group.
 * Partitioning download status by top-level site, introducing a fake download (which takes time but does not actually download anything) for the second-onward site to download a language pack.
-* Only exposing a fixed set of languages to this API, e.g. based on the user's locale.
+* Only exposing a fixed set of languages to this API, e.g. based on the user's locale or the document's main language.
+
+As a first step, we require that detecting the availability of translation for a given language pair be done via individual calls to `canTranslate()`. This allows browsers to implement possible mitigation techniques, such as detecting excessive calls to `canTranslate()` and starting to return `"no"`.
 
 Another way in which this API might enhance the web's fingerprinting surface is if translation and language detection models are updated separately from browser versions. In that case, differing results from different versions of the model provide additional fingerprinting bits beyond those already provided by the browser's major version number. Mandating that older browser versions not receive updates or be able to download models from too far into the future might be a possible remediation for this.
 
