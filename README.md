@@ -277,6 +277,8 @@ As a first step, we require that detecting the availability of translation for a
 
 Another way in which this API might enhance the web's fingerprinting surface is if translation and language detection models are updated separately from browser versions. In that case, differing results from different versions of the model provide additional fingerprinting bits beyond those already provided by the browser's major version number. Mandating that older browser versions not receive updates or be able to download models from too far into the future might be a possible remediation for this.
 
+Finally, we intend to prohibit (in the specification) any use of user-specific information in producing the translations. For example, it would not be permissible to fine-tune the translation model based on information the user has entered into the browser in the past.
+
 ## Alternatives considered and under consideration
 
 ### Streaming input support
