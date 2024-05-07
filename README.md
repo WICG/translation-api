@@ -319,12 +319,14 @@ We're open to this simplification, but suspect it would be worse for efficiency,
 
 ## Stakeholder feedback
 
-* W3C TAG: to be requested
+* W3C TAG: <https://github.com/w3ctag/design-reviews/issues/948>
 * Browser engines:
   * Chromium: prototyping behind a flag
-  * Gecko: to be requested
-  * WebKit: to be requested
-* Web developers: Chrome has received private enthusiasm for such an API, and is working on gathering public evidence of such enthusiasm.
+  * Gecko: <https://github.com/mozilla/standards-positions/issues/1015>
+  * WebKit: <https://github.com/WebKit/standards-positions/issues/339>
+* Web developers:
+  * Some comments in [W3C TAG design review](https://github.com/w3ctag/design-reviews/issues/948)
+  * Some comments in [WICG proposal](https://github.com/WICG/proposals/issues/147)
 
 ## Appendix: converting between language tags and human-readable strings
 
