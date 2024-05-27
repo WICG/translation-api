@@ -1,6 +1,6 @@
 # Explainer for the Web Translation API
 
-_This proposal is an early design sketch by the Chrome translate API team to describe the problem below and solicit feedback on the proposed solution. It has not been approved to ship in Chrome._
+_This proposal is an early design sketch by the Chrome built-in AI team to describe the problem below and solicit feedback on the proposed solution. It has not been approved to ship in Chrome._
 
 Browsers are increasingly offering language translation to their users. Such translation capabilities can also be useful to web developers. This is especially the case when browser's built-in translation abilities cannot help, such as:
 
