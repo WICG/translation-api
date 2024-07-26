@@ -5,9 +5,11 @@
 
 This feature exposes two main pieces of information:
 
-- The availability information for each `{ sourceLanguage, targetLanguage }` pair, so that web developers know what translations are possible and whether such translations will require the user to download a potentially-large language pack.
+- The availability information for each `(sourceLanguage, targetLanguage)` translation pair, or possible language detection result, so that web developers know what translations and detections are possible and whether they will require the user to download a potentially-large language pack.
 
-- The actual results of translations, which can be dependent on the language packs or translation models.
+  (This information has to be probed for each individual pair or possible language, and the browser can say that a language is unavailable even if it is, for privacy reasons.)
+
+- The actual results of translations and language detections, which can be dependent on the AI models in use.
 
 > 02.  Do features in your specification expose the minimum amount of information
 >      necessary to implement the intended functionality?
@@ -18,7 +20,7 @@ We believe so. It's possible that we could remove the exposure of the availabili
 >      personally-identifiable information (PII), or information derived from
 >      either?
 
-No. Although it's imaginable that the translation models could be fine-tuned on PII to give more accurate-to-this-user translations, we intend to disallow this in the specification.
+No. Although it's imaginable that the translation or language detection models could be fine-tuned on PII to give more accurate-to-this-user translations, we intend to disallow this in the specification.
 
 > 04.  How do the features in your specification deal with sensitive information?
 
@@ -27,12 +29,12 @@ We do not deal with sensitive information.
 > 05.  Do the features in your specification introduce state
 >      that persists across browsing sessions?
 
-Yes. The downloading of language packs and translation models persists across browsing sessions.
+Yes. The downloading of language packs and translation or language detection models persists across browsing sessions.
 
 > 06.  Do the features in your specification expose information about the
 >      underlying platform to origins?
 
-Possibly. If a browser does not bundle its own translation models and language packs, but instead uses the operating system's functionality, it is possible for a web developer to infer information about such operating system functionality.
+Possibly. If a browser does not bundle its own models, but instead uses the operating system's functionality, it is possible for a web developer to infer information about such operating system functionality.
 
 > 07.  Does this specification allow an origin to send data to the underlying
 >      platform?
@@ -92,13 +94,15 @@ No.
 >      (instead of getting destroyed) after navigation, and potentially gets reused
 >      on future navigations back to the document?
 
-Ideally, nothing special should happen. In particular, `LanguageTranslator` and `LanguageDetector` objects should still be usable without interruption after navigating back. We'll need to add web platform tests to confirm this, as it's easy to imagine implementation architectures in which keeping these objects alive while the `Document` is in the back/forward cache is difficult.
+Ideally, nothing special should happen. In particular, `AITranslator` and `AILanguageDetector` objects should still be usable without interruption after navigating back. We'll need to add web platform tests to confirm this, as it's easy to imagine implementation architectures in which keeping these objects alive while the `Document` is in the back/forward cache is difficult.
 
-(For such implementations, failing to bfcache `Document`s with active `LanguageTranslator` or `LanguageDetector` objects would a simple way of being spec-compliant.)
+(For such implementations, failing to bfcache `Document`s with active `AITranslator` or `AILanguageDetector` objects would a simple way of being spec-compliant.)
 
 > 18.  What happens when a document that uses your feature gets disconnected?
 
-As with the previous question, nothing special should happen. As with the previous question, it's easy to imagine implementations where this is difficult to implement. We may need to add a check in the specification to prevent such usage, if prototyping shows that the difficulty is significant.
+As with the previous question, nothing special should happen: the objects should still stay alive and be usable.
+
+As with the previous question, it's easy to imagine implementations where this is difficult to implement. We may need to add a check in the specification to prevent such usage, if prototyping shows that the difficulty is significant.
 
 > 19.  What should this questionnaire have asked?
 
