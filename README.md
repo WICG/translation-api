@@ -184,14 +184,17 @@ const languageDetector = await ai.languageDetector.create({ signal: controller.s
 await languageDetector.detect(document.body.textContent, { signal: controller.signal });
 ```
 
-Additionally, the language detector and translator objects themselves have a `destroy()` method. Calling this method will:
+Destroying a translator or language detector will:
 
-* Abort any ongoing downloads or loading process for the language detector or translator model.
-* Reject any ongoing calls to `detect()` or `translate()` with a `"AbortError"` `DOMException`.
-* Error any `ReadableStream`s returned by `translateStreaming()` with a `"AbortError"` `DOMException`.
+* Reject any ongoing calls to `detect()` or `translate()`.
+* Error any `ReadableStream`s returned by `translateStreaming()`.
 * And, most importantly, allow the user agent to unload the machine learning models from memory. (If no other APIs are using them.)
 
-This method is mainly used as a mechanism to free up the memory used by the model without waiting for garbage collection, since machine learning models can be quite large.
+Allowing such destruction provides a way to free up the memory used by the model without waiting for garbage collection, since machine learning models can be quite large.
+
+Aborting the creation process will reject the promise returned by `create()`, and will also stop signaling any ongoing download progress. (The browser may then abort the downloads, or may continue them. Either way, no further `downloadprogress` events will be fired.)
+
+In all cases, the exception used for rejecting promises or erroring `ReadableStream`s will be an `"AbortError"` `DOMException`, or the given abort reason.
 
 ## Detailed design
 
