@@ -26,12 +26,12 @@ Our goals are to:
 
 The following are explicit non-goals:
 
-* We do not intend to force every browser to ship language packs for every language combination, or even to support translation at all. It would be conforming to implement this API by always saying translation and language detection are unavailable, or to implement this API entirely by using cloud services instead of on-device translation.
-* We do not intend to provide guarantees of translation and language detection quality, stability, or interoperability between browsers. These are left as quality-of-implementation issues, similar to the [shape detection API](https://wicg.github.io/shape-detection-api/). (See also a [discussion of interop](https://www.w3.org/reports/ai-web-impact/#interop) in the W3C "AI & the Web" document.)
+* We don't intend to force every browser to ship language packs for every language combination, or even to support translation at all. It would be conforming to implement this API by always saying translation and language detection are unavailable, or to implement this API entirely by using cloud services instead of on-device translation.
+* We don't intend to provide guarantees of translation and language detection quality, stability, or interoperability between browsers. These are left as quality-of-implementation issues, similar to the [shape detection API](https://wicg.github.io/shape-detection-api/). (See also a [discussion of interop](https://www.w3.org/reports/ai-web-impact/#interop) in the W3C "AI & the Web" document.)
 
 The following are potential goals we are not yet certain of:
 
-* Allow web developers to know whether translations are done on-device or using cloud services. This would allow them to guarantee that any user data they feed into this API does not leave the device, which can be important for privacy purposes. (Similarly, we might want to allow developers to request on-device-only translation, in case a browser offers both varieties.)
+* Allow web developers to know whether translation takes place on-device or using cloud services. This would allow them to guarantee that any user data they feed into this API does not leave the device, which can be important for privacy purposes. (Similarly, we might want to allow developers to request on-device-only translation, in case a browser offers both varieties.)
 * Allow web developers to know some identifier for the translation and language detection models in use, separate from the browser version. This would allow them to allowlist or blocklist specific models to maintain a desired level of quality.
 
 Both of these potential goals are potentially detrimental to interoperability, so we want to investigate more how important such functionality is to developers to find the right tradeoff.
@@ -146,7 +146,7 @@ async function translateUnknownCustomerInput(textToTranslate, targetLanguage) {
 
 ### Download progress
 
-In cases where translation or language detection is only possible after a download, you can monitor the download progress (e.g. in order to show your users a progress bar) using code such as the following:
+In cases where translation or language detection is only possible after a download, you can monitor the download progress (in order to show your users a progress bar) using code such as the following:
 
 ```js
 const translator = await ai.translator.create({
@@ -331,7 +331,7 @@ This design means that the implementation must have all information about the ca
 
 This proposal as-is has privacy issues, which we are actively thinking about how to address. They are all centered around how sites that use this API might be able to uniquely fingerprint the user.
 
-The most obvious identifier in the current API design is the list of supported languages, and especially their availability status (`"no"`, `"readily"`, or `"after-download"`). For example, as of the time of this writing [Firefox supports 9 languages](https://www.mozilla.org/en-US/firefox/features/translate/), which can each be [independently downloaded](https://support.mozilla.org/en-US/kb/website-translation#w_configure-installed-languages). With a naive implementation, this gives 9 bits of identifying information, which various sites can all correlate.
+The most obvious identifier in the current API design is the list of supported languages, and especially their availability status (`"no"`, `"readily"`, or `"after-download"`). For example, as of the time of this writing [Firefox supports 9 languages](https://www.mozilla.org/firefox/features/translate/), which can each be [independently downloaded](https://support.mozilla.org/kb/website-translation#w_configure-installed-languages). With a naive implementation, this gives 9 bits of identifying information, which various sites can all correlate.
 
 Some sort of mitigation may be necessary here. We believe this is adjacent to other areas that have seen similar mitigation, such as the [Local Font Access API](https://github.com/WICG/local-font-access/blob/main/README.md). Possible techniques are:
 
