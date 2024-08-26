@@ -377,7 +377,7 @@ Another possible simplification is to make the `capabilities()` APIs synchronous
 
 ### Allowing unknown source languages for translation
 
-An earlier version of this API included support for combining the langauge detection and translation steps into a single translation call, with a best-guess on the source language. The idea implied that this could possibly be more efficient than requiring two separate calls, and that it could possibly even be done using a single model.
+An earlier version of this API included support for combining the langauge detection and translation steps into a single translation call, with a best-guess on the source language. The idea implied that this approach may be more efficient than requiring two separate calls, and that translation could possibly be done using a single model.
 
 We abandoned this design when it became clear that existing browsers have very decoupled implementations of translation vs. language detection, using separate models for each. This includes supporting different languages for language detection vs. for translation. So even if the translation model supported an unknown-source-language mode, it might not support the same inputs as the language detection model, which would create a confusing developer experience and be hard to signal in the capabilities API.
 
