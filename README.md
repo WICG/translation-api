@@ -11,16 +11,16 @@ Browsers are increasingly offering language translation to their users. Such tra
 
 To perform translation in such cases, web sites currently have to either call out to cloud APIs, or bring their own translation models and run them using technologies like WebAssembly and WebGPU. This proposal introduces a new JavaScript API for exposing a browser's existing language translation abilities to web pages, so that if present, they can serve as a simpler and less resource-intensive alternative.
 
-An important supplement to translation is language detection. This can be combined with translation, e.g. taking user input in an unknown language and translating it to a specific target language. In a similar way, browsers today often already have langauge detection capabilities, and we want to offer them to web developers through a JavaScript API.
+An important supplement to translation is language detection. This can be combined with translation, e.g. taking user input in an unknown language and translating it to a specific target language. In a similar way, browsers today often already have language detection capabilities, and we want to offer them to web developers through a JavaScript API.
 
 ## Goals
 
 Our goals are to:
 
-* Help web developers perform real-time translations (e.g. of user input).
+* Help web developers perform real-time translations (for example, of user input).
 * Help web developers perform real-time language detection.
 * Guide web developers to gracefully handle failure cases, e.g. translation not being available or possible.
-* Harmonize well with existing browser and OS translation technology ([Brave](https://support.brave.com/hc/en-us/articles/8963107404813-How-do-I-use-Brave-Translate), [Chrome](https://support.google.com/chrome/answer/173424?hl=en&co=GENIE.Platform%3DDesktop#zippy=%2Ctranslate-selected-text), [Edge](https://support.microsoft.com/en-us/topic/use-microsoft-translator-in-microsoft-edge-browser-4ad1c6cb-01a4-4227-be9d-a81e127fcb0b), [Firefox](https://support.mozilla.org/en-US/kb/website-translation), [Safari](https://9to5mac.com/2020/12/04/how-to-translate-websites-with-safari-mac/)), e.g. by allowing on-the-fly downloading of different languages instead of assuming all are present from the start.
+* Harmonize well with existing browser and OS translation technology ([Brave](https://support.brave.com/hc/articles/8963107404813-How-do-I-use-Brave-Translate), [Chrome](https://support.google.com/chrome/answer/173424&co=GENIE.Platform%3DDesktop#zippy=%2Ctranslate-selected-text), [Edge](https://support.microsoft.com/topic/use-microsoft-translator-in-microsoft-edge-browser-4ad1c6cb-01a4-4227-be9d-a81e127fcb0b), [Firefox](https://support.mozilla.org/kb/website-translation), [Safari](https://9to5mac.com/2020/12/04/how-to-translate-websites-with-safari-mac/)), e.g. by allowing on-the-fly downloading of different languages instead of assuming all are present from the start.
 * Allow a variety of implementation strategies, including on-device vs. cloud-based translation, while keeping these details abstracted from developers.
 * Allow implementations to expose different capabilities for translation vs. language detection. For example, an implementation might be able to detect 30+ languages, but only be able to translate between 6.
 
