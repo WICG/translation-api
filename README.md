@@ -17,7 +17,7 @@ An important supplement to translation is language detection. This can be combin
 
 Our goals are to:
 
-* Help web developers perform real-time translations (for example, of user input).
+* Help web developers perform real-time translations (e.g., of user input).
 * Help web developers perform real-time language detection.
 * Guide web developers to gracefully handle failure cases, e.g. translation not being available or possible.
 * Harmonize well with existing browser and OS translation technology ([Brave](https://support.brave.com/hc/articles/8963107404813-How-do-I-use-Brave-Translate), [Chrome](https://support.google.com/chrome/answer/173424&co=GENIE.Platform%3DDesktop#zippy=%2Ctranslate-selected-text), [Edge](https://support.microsoft.com/topic/use-microsoft-translator-in-microsoft-edge-browser-4ad1c6cb-01a4-4227-be9d-a81e127fcb0b), [Firefox](https://support.mozilla.org/kb/website-translation), [Safari](https://9to5mac.com/2020/12/04/how-to-translate-websites-with-safari-mac/)), e.g. by allowing on-the-fly downloading of different languages instead of assuming all are present from the start.
@@ -26,12 +26,12 @@ Our goals are to:
 
 The following are explicit non-goals:
 
-* We don't intend to force every browser to ship language packs for every language combination, or even to support translation at all. It would be conforming to implement this API by always saying translation and language detection are unavailable, or to implement this API entirely by using cloud services instead of on-device translation.
-* We don't intend to provide guarantees of translation and language detection quality, stability, or interoperability between browsers. These are left as quality-of-implementation issues, similar to the [shape detection API](https://wicg.github.io/shape-detection-api/). (See also a [discussion of interop](https://www.w3.org/reports/ai-web-impact/#interop) in the W3C "AI & the Web" document.)
+* We do not intend to force every browser to ship language packs for every language combination, or even to support translation at all. It would be conforming to implement this API by always saying translation and language detection are unavailable, or to implement this API entirely by using cloud services instead of on-device translation.
+* We do not intend to provide guarantees of translation and language detection quality, stability, or interoperability between browsers. These are left as quality-of-implementation issues, similar to the [shape detection API](https://wicg.github.io/shape-detection-api/). (See also a [discussion of interop](https://www.w3.org/reports/ai-web-impact/#interop) in the W3C "AI & the Web" document.)
 
 The following are potential goals we are not yet certain of:
 
-* Allow web developers to know whether translation takes place on-device or using cloud services. This would allow them to guarantee that any user data they feed into this API does not leave the device, which can be important for privacy purposes. (Similarly, we might want to allow developers to request on-device-only translation, in case a browser offers both varieties.)
+* Allow web developers to know whether translation are done on-device or using cloud services. This would allow them to guarantee that any user data they feed into this API does not leave the device, which can be important for privacy purposes. (Similarly, we might want to allow developers to request on-device-only translation, in case a browser offers both varieties.)
 * Allow web developers to know some identifier for the translation and language detection models in use, separate from the browser version. This would allow them to allowlist or blocklist specific models to maintain a desired level of quality.
 
 Both of these potential goals are potentially detrimental to interoperability, so we want to investigate more how important such functionality is to developers to find the right tradeoff.
@@ -377,7 +377,7 @@ Another possible simplification is to make the `capabilities()` APIs synchronous
 
 ### Allowing unknown source languages for translation
 
-An earlier version of this API included support for combining the langauge detection and translation steps into a single translation call, with a best-guess on the source language. The idea implied that this approach may be more efficient than requiring two separate calls, and that translation could possibly be done using a single model.
+An earlier version of this API included support for combining the langauge detection and translation steps into a single translation call, with a best-guess on the source language. The idea implied that this approach would be more efficient than requiring two separate calls, and that translation could possibly be done using a single model.
 
 We abandoned this design when it became clear that existing browsers have very decoupled implementations of translation vs. language detection, using separate models for each. This includes supporting different languages for language detection vs. for translation. So even if the translation model supported an unknown-source-language mode, it might not support the same inputs as the language detection model, which would create a confusing developer experience and be hard to signal in the capabilities API.
 
