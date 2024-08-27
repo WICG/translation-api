@@ -146,7 +146,7 @@ async function translateUnknownCustomerInput(textToTranslate, targetLanguage) {
 
 ### Download progress
 
-In cases where translation or language detection is only possible after a download, you can monitor the download progress (in order to show your users a progress bar) using code such as the following:
+In cases where translation or language detection is only possible after a download, you can monitor the download progress (e.g. in order to show your users a progress bar) using code such as the following:
 
 ```js
 const translator = await ai.translator.create({
