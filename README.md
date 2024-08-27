@@ -31,7 +31,7 @@ The following are explicit non-goals:
 
 The following are potential goals we are not yet certain of:
 
-* Allow web developers to know whether translation are done on-device or using cloud services. This would allow them to guarantee that any user data they feed into this API does not leave the device, which can be important for privacy purposes. (Similarly, we might want to allow developers to request on-device-only translation, in case a browser offers both varieties.)
+* Allow web developers to know whether translation is done on-device or using cloud services. This would allow them to guarantee that any user data they feed into this API does not leave the device, which can be important for privacy purposes. (Similarly, we might want to allow developers to request on-device-only translation, in case a browser offers both varieties.)
 * Allow web developers to know some identifier for the translation and language detection models in use, separate from the browser version. This would allow them to allowlist or blocklist specific models to maintain a desired level of quality.
 
 Both of these potential goals are potentially detrimental to interoperability, so we want to investigate more how important such functionality is to developers to find the right tradeoff.
