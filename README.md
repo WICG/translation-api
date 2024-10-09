@@ -87,8 +87,8 @@ Both APIs provide a promise-returning `capabilities()` methods which let you kno
 
 Each of these capabilities objects has further methods which give the state of specific translation or language detection capabilities:
 
-* `canTranslate(sourceLanguageTag, targetLanguageTag)`
-* `canDetect(languageTag)`
+* `languagePairAvailable(sourceLanguageTag, targetLanguageTag)`, for the `ai.translation.capabilities()` object
+* `languageAvailable(languageTag)`, for the `ai.languageDetection.capabilities()` object
 
 Both of these methods return `"no"`, `"after-download"`, or `"readily"`, which have the same meanings as above, except specialized to the specific arguments in question.
 
@@ -110,7 +110,7 @@ async function translateUnknownCustomerInput(textToTranslate, targetLanguage) {
     }
 
     // Special-case check for Japanese since for our site it's particularly important.
-    if (languageDetectorCapabilities.canDetect("ja") === "no") {
+    if (languageDetectorCapabilities.languageAvailable("ja") === "no") {
       console.warn("Japanese Language detection is not available. Falling back to cloud API.");
       sourceLanguage = await useSomeCloudAPIToDetectLanguage(textToTranslate);
     } else {
@@ -127,15 +127,15 @@ async function translateUnknownCustomerInput(textToTranslate, targetLanguage) {
   }
 
   // Now we've figured out the source language. Let's translate it!
-  // Note how we can just check `translatorCapabilities.canTranslate()` instead of also checking
+  // Note how we can just check `translatorCapabilities.languagePairAvailable()` instead of also checking
   // `translatorCapabilities.available`.
-  const canTranslate = translatorCapabilities.canTranslate(sourceLanguage, targetLanguage);
-  if (canTranslate === "no") {
+  const availability = translatorCapabilities.languagePairAvailable(sourceLanguage, targetLanguage);
+  if (availability === "no") {
     console.warn("Translation is not available. Falling back to cloud API.");
     return await useSomeCloudAPIToTranslate(textToTranslate, { sourceLanguage, targetLanguage });
   }
 
-  if (canTranslate === "after-download") {
+  if (availability === "after-download") {
     console.log("Translation is available, but something will have to be downloaded. Hold tight!");
   }
 
@@ -250,7 +250,7 @@ interface AITranslator {
 interface AITranslatorCapabilities {
   readonly attribute AICapabilityAvailability available;
 
-  AICapabilityAvailability canTranslate(DOMString sourceLanguage, DOMString targetLanguage);
+  AICapabilityAvailability languagePairAvailable(DOMString sourceLanguage, DOMString targetLanguage);
 };
 
 dictionary AITranslatorCreateOptions {
@@ -287,7 +287,7 @@ interface AILanguageDetector {
 interface AILanguageDetectorCapabilities {
   readonly attribute AICapabilityAvailability available;
 
-  AICapabilityAvailability canDetect(DOMString languageTag);
+  AICapabilityAvailability languageAvailable(DOMString languageTag);
 };
 
 dictionary AILanguageDetectorCreateOptions {
@@ -339,7 +339,7 @@ Some sort of mitigation may be necessary here. We believe this is adjacent to ot
 * Partitioning download status by top-level site, introducing a fake download (which takes time but does not actually download anything) for the second-onward site to download a language pack.
 * Only exposing a fixed set of languages to this API, e.g. based on the user's locale or the document's main language.
 
-As a first step, we require that detecting the availability of translation for a given language pair be done via individual calls to `canTranslate()` and `canDetect()`. This allows browsers to implement possible mitigation techniques, such as detecting excessive calls to these methods and starting to return `"no"`.
+As a first step, we require that detecting the availability of translation/detection be done via individual calls to `translationCapabilities.languagePairAvailable()` and `detectionCapabilities.languageAvailable()`. This allows browsers to implement possible mitigation techniques, such as detecting excessive calls to these methods and starting to return `"no"`.
 
 Another way in which this API might enhance the web's fingerprinting surface is if translation and language detection models are updated separately from browser versions. In that case, differing results from different versions of the model provide additional fingerprinting bits beyond those already provided by the browser's major version number. Mandating that older browser versions not receive updates or be able to download models from too far into the future might be a possible remediation for this.
 
