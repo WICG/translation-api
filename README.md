@@ -204,16 +204,16 @@ In all cases, the exception used for rejecting promises or erroring `ReadableStr
 // Shared self.ai APIs
 
 partial interface WindowOrWorkerGlobalScope {
-  [Replaceable] readonly attribute AI ai;
+  [Replaceable, SecureContext] readonly attribute AI ai;
 };
 
-[Exposed=(Window,Worker)]
+[Exposed=(Window,Worker), SecureContext]
 interface AI {
   readonly attribute AITranslatorFactory translator;
   readonly attribute AILanguageDetectorFactory languageDetector;
 };
 
-[Exposed=(Window,Worker)]
+[Exposed=(Window,Worker), SecureContext]
 interface AICreateMonitor : EventTarget {
   attribute EventHandler ondownloadprogress;
 
@@ -229,13 +229,13 @@ enum AICapabilityAvailability { "readily", "after-download", "no" };
 ```webidl
 // Translator
 
-[Exposed=(Window,Worker)]
+[Exposed=(Window,Worker), SecureContext]
 interface AITranslatorFactory {
   Promise<AITranslator> create(AITranslatorCreateOptions options);
   Promise<AITranslatorCapabilities> capabilities();
 };
 
-[Exposed=(Window,Worker)]
+[Exposed=(Window,Worker), SecureContext]
 interface AITranslator {
   Promise<DOMString> translate(DOMString input, optional AITranslatorTranslateOptions options = {});
   ReadableStream translateStreaming(DOMString input, optional AITranslatorTranslateOptions options = {});
@@ -246,7 +246,7 @@ interface AITranslator {
   undefined destroy();
 };
 
-[Exposed=(Window,Worker)]
+[Exposed=(Window,Worker), SecureContext]
 interface AITranslatorCapabilities {
   readonly attribute AICapabilityAvailability available;
 
@@ -269,13 +269,13 @@ dictionary AITranslatorTranslateOptions {
 ```webidl
 // Language detector
 
-[Exposed=(Window,Worker)]
+[Exposed=(Window,Worker), SecureContext]
 interface AILanguageDetectorFactory {
   Promise<AILanguageDetector> create(optional AILanguageDetectorCreateOptions options = {});
   Promise<AILanguageDetectorCapabilities> capabilities();
 };
 
-[Exposed=(Window,Worker)]
+[Exposed=(Window,Worker), SecureContext]
 interface AILanguageDetector {
   Promise<sequence<LanguageDetectionResult>> detect(DOMString input,
                                                     optional AILanguageDetectorDetectOptions options = {});
@@ -283,7 +283,7 @@ interface AILanguageDetector {
   undefined destroy();
 };
 
-[Exposed=(Window,Worker)]
+[Exposed=(Window,Worker), SecureContext]
 interface AILanguageDetectorCapabilities {
   readonly attribute AICapabilityAvailability available;
 
