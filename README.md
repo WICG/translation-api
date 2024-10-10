@@ -1,4 +1,4 @@
-# Explainer for the Web Translation and Language Detection APIs
+# Explainer for the Translator and Language Detector APIs
 
 _This proposal is an early design sketch by the Chrome built-in AI team to describe the problem below and solicit feedback on the proposed solution. It has not been approved to ship in Chrome._
 
@@ -44,7 +44,7 @@ See [below](#language-tag-handling) for more on the details of how language tags
 
 ### Translation
 
-Here is the basic usage of the translation API, with no error handling:
+Here is the basic usage of the translator API, with no error handling:
 
 ```js
 const translator = await ai.translator.create({
@@ -62,7 +62,7 @@ Note that the `create()` method call here might cause the download of a translat
 
 ### Language detection
 
-A similar simplified example of the language detection API:
+A similar simplified example of the language detector API:
 
 ```js
 const detector = await ai.languageDetector.create();

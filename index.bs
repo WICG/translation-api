@@ -1,12 +1,12 @@
 <pre class='metadata'>
-Title: Web Translation API
+Title: Translator and Language Detector APIs
 Shortname: translation
 Level: None
 Status: w3c/UD
 Repository: explainers-by-googlers/translation-api
 URL: https://explainers-by-googlers.github.io/translation-api
 Editor: Domenic Denicola, Google https://google.com, d@domenic.me, https://domenic.me/
-Abstract: The web translation API gives web pages the ability to translate text between languages, and detect the language of such text.
+Abstract: The translator and langauge detector APIs gives web pages the ability to translate text between languages, and detect the language of such text.
 Markup Shorthands: markdown yes, css no
 Complain About: accidental-2119 yes, missing-example-ids yes
 Assume Explicit For: yes
