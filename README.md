@@ -218,7 +218,7 @@ interface AICreateMonitor : EventTarget {
   attribute EventHandler ondownloadprogress;
 
   // Might get more stuff in the future, e.g. for
-  // https://github.com/explainers-by-googlers/prompt-api/issues/4
+  // https://github.com/webmachinelearning/prompt-api/issues/4
 };
 
 callback AICreateMonitorCallback = undefined (AICreateMonitor monitor);
@@ -309,7 +309,7 @@ dictionary LanguageDetectionResult {
 
 If a browser supports translating from `ja` to `en`, does it also support translating from `ja` to `en-US`? What about `en-GB`? What about the (discouraged, but valid) `en-Latn`, i.e. English written in the usual Latin script? But translation to `en-Brai`, English written in the Braille script, is different entirely.
 
-We're not clear on what the right model is here, and are discussing it in [issue #11](https://github.com/WICG/translation-api/issues/11).
+We're not clear on what the right model is here, and are discussing it in [issue #11](https://github.com/webmachinelearning/translation-api/issues/11).
 
 ### Downloading
 
