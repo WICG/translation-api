@@ -77,59 +77,53 @@ Here `results` will be an array of `{ detectedLanguage, confidence }` objects, w
 
 The language being unknown is represented by `detectedLanguage` being null. The array will always contain at least 1 entry, although it could be for the unknown (`null`) language.
 
-### Capabilities, and a more realistic combined example
+### Language detection with expected input languages
 
-Both APIs provide a promise-returning `capabilities()` methods which let you know, before calling `create()`, what is possible with the implementation. The capabilities object that the promise fulfills with has an `available` property which is one of `"no"`, `"after-download"`, or `"readily"`:
+If there are certain languages you need to be able to detect for your use case, you can include them in the `expectedInputLanguages` option when creating a language detector:
 
-* `"no"` means that the implementation does not support translation or language detection.
-* `"after-download"` means that the implementation supports translation or language detection, but it will have to download something (e.g. a machine learning model) before it can do anything.
-* `"readily"` means that the implementation supports translation or language detection, and at least the base model is available without any downloads.
+```js
+const detector = await ai.languageDetector.create({ expectedInputLanguages: ["en", "ja"] });
+```
 
-Each of these capabilities objects has further methods which give the state of specific translation or language detection capabilities:
+This will allow the implementation to download additional resources like language detection models if necessary, and will ensure that the promise is rejected with a `"NotSupportedError"` `DOMException` if the browser is unable to detect the given input languages.
 
-* `languagePairAvailable(sourceLanguageTag, targetLanguageTag)`, for the `ai.translation.capabilities()` object
-* `languageAvailable(languageTag)`, for the `ai.languageDetection.capabilities()` object
+### Checking before creation, and a more realistic combined example
 
-Both of these methods return `"no"`, `"after-download"`, or `"readily"`, which have the same meanings as above, except specialized to the specific arguments in question.
+Both APIs provide the ability to know, before calling `create()`, what is possible with the implementation. This is done via `availability()` methods, which takes the same options as `create()`. They return a promise, which fulfills with one of the following values:
+
+* `"no"` means that the implementation does not support translation or language detection of the given language(s).
+* `"after-download"` means that the implementation supports translation or language detection of the given language(s), but it will have to download something (e.g., a machine learning model) as part of creating the associated object.
+* `"readily"` means that the implementation supports translation or language detection of the given language(s), without performing any downloads.
 
 Here is an example that adds capability checking to log more information and fall back to cloud services, as part of a language detection plus translation task:
 
 ```js
 async function translateUnknownCustomerInput(textToTranslate, targetLanguage) {
-  const languageDetectorCapabilities = await ai.languageDetector.capabilities();
-  const translatorCapabilities = await ai.translator.capabilities();
+  const canDetect = await ai.languageDetector.availability();
 
-  // If `languageDetectorCapabilities.available === "no"`, then assume the source language is the
+  // If there is no language detector, then assume the source language is the
   // same as the document language.
   let sourceLanguage = document.documentElement.lang;
 
   // Otherwise, let's detect the source language.
-  if (languageDetectorCapabilities.available !== "no") {
-    if (languageDetectorCapabilities.available === "after-download") {
+  if (canDetect !== "no") {
+    if (canDetect === "after-download") {
       console.log("Language detection is available, but something will have to be downloaded. Hold tight!");
     }
 
-    // Special-case check for Japanese since for our site it's particularly important.
-    if (languageDetectorCapabilities.languageAvailable("ja") === "no") {
-      console.warn("Japanese Language detection is not available. Falling back to cloud API.");
-      sourceLanguage = await useSomeCloudAPIToDetectLanguage(textToTranslate);
-    } else {
-      const detector = await ai.languageDetector.create();
-      const [bestResult] = await detector.detect(textToTranslate);
+    const detector = await ai.languageDetector.create();
+    const [bestResult] = await detector.detect(textToTranslate);
 
-      if (bestResult.detectedLangauge ==== null || bestResult.confidence < 0.4) {
-        // We'll just return the input text without translating. It's probably mostly punctuation
-        // or something.
-        return textToTranslate;
-      }
-      sourceLanguage = bestResult.detectedLanguage;
+    if (bestResult.detectedLangauge ==== null || bestResult.confidence < 0.4) {
+      // We'll just return the input text without translating. It's probably mostly punctuation
+      // or something.
+      return textToTranslate;
     }
+    sourceLanguage = bestResult.detectedLanguage;
   }
 
   // Now we've figured out the source language. Let's translate it!
-  // Note how we can just check `translatorCapabilities.languagePairAvailable()` instead of also checking
-  // `translatorCapabilities.available`.
-  const availability = translatorCapabilities.languagePairAvailable(sourceLanguage, targetLanguage);
+  const availability = await ai.translator.availability({ sourceLanguage, targetLanguage });
   if (availability === "no") {
     console.warn("Translation is not available. Falling back to cloud API.");
     return await useSomeCloudAPIToTranslate(textToTranslate, { sourceLanguage, targetLanguage });
@@ -232,7 +226,7 @@ enum AICapabilityAvailability { "readily", "after-download", "no" };
 [Exposed=(Window,Worker), SecureContext]
 interface AITranslatorFactory {
   Promise<AITranslator> create(AITranslatorCreateOptions options);
-  Promise<AITranslatorCapabilities> capabilities();
+  Promise<AICapabilityAvailability> availability(AITranslatorCreateCoreOptions options);
 };
 
 [Exposed=(Window,Worker), SecureContext]
@@ -246,19 +240,14 @@ interface AITranslator {
   undefined destroy();
 };
 
-[Exposed=(Window,Worker), SecureContext]
-interface AITranslatorCapabilities {
-  readonly attribute AICapabilityAvailability available;
-
-  AICapabilityAvailability languagePairAvailable(DOMString sourceLanguage, DOMString targetLanguage);
-};
-
-dictionary AITranslatorCreateOptions {
-  AbortSignal signal;
-  AICreateMonitorCallback monitor;
-
+dictionary AITranslatorCreateCoreOptions {
   required DOMString sourceLanguage;
   required DOMString targetLanguage;
+};
+
+dictionary AITranslatorCreateOptions : AITranslatorCreateCoreOptions {
+  AbortSignal signal;
+  AICreateMonitorCallback monitor;
 };
 
 dictionary AITranslatorTranslateOptions {
@@ -272,7 +261,7 @@ dictionary AITranslatorTranslateOptions {
 [Exposed=(Window,Worker), SecureContext]
 interface AILanguageDetectorFactory {
   Promise<AILanguageDetector> create(optional AILanguageDetectorCreateOptions options = {});
-  Promise<AILanguageDetectorCapabilities> capabilities();
+  Promise<AICapabilityAvailability> availability(optional AILanguageDetectorCreateCoreOptions = {});
 };
 
 [Exposed=(Window,Worker), SecureContext]
@@ -280,17 +269,16 @@ interface AILanguageDetector {
   Promise<sequence<LanguageDetectionResult>> detect(DOMString input,
                                                     optional AILanguageDetectorDetectOptions options = {});
 
+  readonly attribute FrozenArray<DOMString>? expectedInputLanguages;
+
   undefined destroy();
 };
 
-[Exposed=(Window,Worker), SecureContext]
-interface AILanguageDetectorCapabilities {
-  readonly attribute AICapabilityAvailability available;
-
-  AICapabilityAvailability languageAvailable(DOMString languageTag);
+dictionary AILanguageDetectorCreateCoreOptions {
+  sequence<DOMString> expectedInputLanguages;
 };
 
-dictionary AILanguageDetectorCreateOptions {
+dictionary AILanguageDetectorCreateOptions : AILanguageDetectorCreateCoreOptions {
   AbortSignal signal;
   AICreateMonitorCallback monitor;
 };
@@ -313,17 +301,9 @@ We're not clear on what the right model is here, and are discussing it in [issue
 
 ### Downloading
 
-The current design envisions that the following operations will _not_ cause downloads of language packs or other material like a language detection model:
+The current design envisions that `availability()` methods will _not_ cause downloads of language packs or other material like a language detection model. Whereas, the `create()` methods _can_ cause downloads. In all cases, whether or not creation will initiate a download can be detected beforehand by the corresponding `availability()` method.
 
-* `ai.translator.capabilities()` and the properties/methods of the returned object
-* `ai.languageDetector.capabilities()` and the properties/methods of the returned object
-
-The following _can_ cause downloads. In all cases, whether or not a call will initiate a download can be detected beforehand by checking the corresponding capabilities object.
-
-* `ai.translator.create()`
-* `ai.languageDetector.create()`
-
-After a developer has a `AITranslator` or `AILanguageDetector` object created by these methods, further calls are not expected to cause any downloads. (Although they might require internet access, if the implementation is not entirely on-device.)
+After a developer has a `AITranslator` or `AILanguageDetector` object, further calls are not expected to cause any downloads. (Although they might require internet access, if the implementation is not entirely on-device.)
 
 This design means that the implementation must have all information about the capabilities of its translation and language detection models available beforehand, i.e. "shipped with the browser". (Either as part of the browser binary, or through some out-of-band update mechanism that eagerly pushes updates.)
 
@@ -339,7 +319,7 @@ Some sort of mitigation may be necessary here. We believe this is adjacent to ot
 * Partitioning download status by top-level site, introducing a fake download (which takes time but does not actually download anything) for the second-onward site to download a language pack.
 * Only exposing a fixed set of languages to this API, e.g. based on the user's locale or the document's main language.
 
-As a first step, we require that detecting the availability of translation/detection be done via individual calls to `translationCapabilities.languagePairAvailable()` and `detectionCapabilities.languageAvailable()`. This allows browsers to implement possible mitigation techniques, such as detecting excessive calls to these methods and starting to return `"no"`.
+As a first step, we require that detecting the availability of translation/detection be done via individual calls to `ai.translator.availability()` and `ai.languageDetector.availability()`. This allows browsers to implement possible mitigation techniques, such as detecting excessive calls to these methods and starting to return `"no"`.
 
 Another way in which this API might enhance the web's fingerprinting surface is if translation and language detection models are updated separately from browser versions. In that case, differing results from different versions of the model provide additional fingerprinting bits beyond those already provided by the browser's major version number. Mandating that older browser versions not receive updates or be able to download models from too far into the future might be a possible remediation for this.
 
@@ -373,13 +353,13 @@ Should we simplify these down with convenience APIs that do both steps at once?
 
 We're open to this idea, but we think the existing complexity is necessary to support the design wherein translation and language detection models might not be already downloaded. By separating the two stages, we allow web developers to perform the initial creation-and-possibly-downloading steps early in their page's lifecycle, in preparation for later, hopefully-quick calls to APIs like `translate()`.
 
-Another possible simplification is to make the `capabilities()` APIs synchronous instead of asynchronous. This would be implementable by having the browser proactively load the capabilities information into the main thread's process, upon creation of the global object. We think this is not worthwhile, as it imposes a non-negligible cost on all global object creation, even when the APIs are not used.
+Another possible simplification is to make the `availability()` APIs synchronous instead of asynchronous. This would be implementable by having the browser proactively load the capabilities information into the main thread's process, upon creation of the global object. We think this is not worthwhile, as it imposes a non-negligible cost on all global object creation, even when the APIs are not used.
 
 ### Allowing unknown source languages for translation
 
 An earlier revision of this API including support for combining the language detection and translation steps into a single translation call, which did a best-guess on the source language. The idea was that this would possibly be more efficient than requiring the web developer to do two separate calls, and it could possibly even be done using a single model.
 
-We abandoned this design when it became clear that existing browsers have very decoupled implementations of translation vs. language detection, using separate models for each. This includes supporting different languages for language detection vs. for translation. So even if the translation model supported an unknown-source-language mode, it might not support the same inputs as the language detection model, which would create a confusing developer experience and be hard to signal in the capabilities API.
+We abandoned this design when it became clear that existing browsers have very decoupled implementations of translation vs. language detection, using separate models for each. This includes supporting different languages for language detection vs. for translation. So even if the translation model supported an unknown-source-language mode, it might not support the same inputs as the language detection model, which would create a confusing developer experience and be hard to signal in the API.
 
 ## Stakeholder feedback
 

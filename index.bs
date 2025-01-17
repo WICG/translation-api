@@ -2,7 +2,7 @@
 Title: Translator and Language Detector APIs
 Shortname: translation
 Level: None
-Status: w3c/UD
+Status: CG-DRAFT
 Group: webml
 Repository: webmachinelearning/translation-api
 URL: https://webmachinelearning.github.io/translation-api
@@ -11,9 +11,10 @@ Abstract: The translator and langauge detector APIs gives web pages the ability 
 Markup Shorthands: markdown yes, css no
 Complain About: accidental-2119 yes, missing-example-ids yes
 Assume Explicit For: yes
-Die On: warning
-Boilerplate: omit conformance
 Default Biblio Status: current
+Boilerplate: omit conformance
+Indent: 2
+Die On: warning
 </pre>
 
 Introduction {#intro}
